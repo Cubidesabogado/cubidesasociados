@@ -482,7 +482,16 @@
       <button onclick="closeAdmin()" style="background:none;border:none;color:var(--text-muted);font-size:1.4rem;cursor:pointer;">✕</button>
     </div>
 
-    <!-- Lista de artículos existentes -->
+    <!-- Banner de configuración (se oculta cuando JSONBin está listo) -->
+    <div id="adminSetupBanner" style="background:rgba(201,168,76,0.08);border:0.5px solid rgba(201,168,76,0.35);padding:1.25rem 1.5rem;margin-bottom:2rem;">
+      <div style="font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem;">Configuración requerida — 3 pasos rápidos</div>
+      <div style="font-size:0.83rem;color:var(--text-muted);line-height:1.9;">
+        <strong style="color:var(--white);font-weight:400;">Paso 1.</strong> Ve a <span style="color:var(--gold);">jsonbin.io</span> → crea cuenta gratuita.<br/>
+        <strong style="color:var(--white);font-weight:400;">Paso 2.</strong> Copia tu <em>Master Key</em> y pégala en el HTML donde dice <code style="background:rgba(0,0,0,0.3);padding:1px 6px;font-size:0.78rem;">PEGA_AQUI_TU_API_KEY</code>.<br/>
+        <strong style="color:var(--white);font-weight:400;">Paso 3.</strong> Crea un Bin nuevo (contenido inicial: <code style="background:rgba(0,0,0,0.3);padding:1px 6px;font-size:0.78rem;">[]</code>) → copia el ID → pégalo donde dice <code style="background:rgba(0,0,0,0.3);padding:1px 6px;font-size:0.78rem;">PEGA_AQUI_TU_BIN_ID</code>.<br/>
+        <strong style="color:var(--white);font-weight:400;">Paso 4.</strong> Sube el HTML actualizado a GitHub. Listo — los artículos quedan en la nube.
+      </div>
+    </div>
     <div id="adminList" style="margin-bottom:2rem;"></div>
 
     <!-- Formulario nuevo/editar artículo -->
@@ -773,12 +782,16 @@ document.getElementById('contactForm').addEventListener('submit', async function
 });
 
 // ═══════════════════════════════════════
-// BLOG ENGINE — almacenamiento local
+// BLOG ENGINE — almacenamiento en la nube (JSONBin.io)
 // ═══════════════════════════════════════
-const BLOG_KEY = 'ca_blog_posts';
-const ADMIN_PASS = 'cubides2025'; // Cambie esta contraseña
+// PASO 1: Crea cuenta gratuita en https://jsonbin.io
+// PASO 2: Copia tu Master Key y pégala en JSONBIN_KEY
+// PASO 3: Crea un Bin nuevo (New Bin → content: [] → Create) y pega el ID en JSONBIN_ID
+const JSONBIN_ID  = '6a2899a4f5f4af5e29d4e7dd';
+const JSONBIN_KEY = '$2a$10$rHfqZUx0snUS0aFVGYDEpORebVFqi01emaklqyyN.bcSMHR5iyb2C';
+const ADMIN_PASS  = 'cubides2025';            // Cambie esta contraseña
 
-// Artículos iniciales de muestra
+// Artículos de respaldo (se usan si JSONBin aún no está configurado)
 const DEFAULT_POSTS = [
   {
     id: 1,
@@ -803,20 +816,43 @@ const DEFAULT_POSTS = [
     date: "Marzo 2025",
     excerpt: "La SAS sigue siendo la forma societaria más flexible del ordenamiento colombiano. Le explicamos el proceso actualizado ante Cámara de Comercio.",
     body: "La Sociedad por Acciones Simplificada (SAS), creada por la Ley 1258 de 2008, es la forma societaria más utilizada en Colombia por su flexibilidad y bajo costo de constitución.\n\nPara constituir una SAS en Cali necesita: uno o más accionistas (personas naturales o jurídicas), un objeto social (puede ser indeterminado), un capital autorizado, suscrito y pagado, y un representante legal. No requiere junta directiva ni revisor fiscal si los activos o ingresos no superan los topes legales.\n\nLos pasos son: 1. Verificación del nombre en la Cámara de Comercio de Cali para evitar homonimia. 2. Redacción del documento de constitución, que puede ser escritura pública o documento privado autenticado. 3. Inscripción en el Registro Mercantil de la Cámara de Comercio. 4. Obtención del NIT ante la DIAN.\n\nEl costo de registro varía según el capital suscrito. Para capitales menores a $20 millones, el registro puede oscilar entre $400.000 y $600.000.\n\nEn Cubides Asociados en Cali le asesoramos en la estructuración societaria, redacción de estatutos y trámites de registro. Contáctenos al +57 314 289 4684."
+  },
+  {
+    id: 4,
+    tag: "Derecho Corporativo",
+    title: "Abogado corporativo en Cali: cómo proteger tu empresa legalmente en 2025",
+    date: "Junio 2025",
+    excerpt: "Los empresarios que más pierden son los que esperan a que el problema llegue. Conozca los 5 riesgos legales más frecuentes en empresas de Cali y cómo prevenirlos.",
+    body: "Si tienes una empresa en Cali, es probable que en algún momento hayas pensado: ¿necesito realmente un abogado, o eso es solo para las grandes compañías? La realidad es que los empresarios que más pierden tiempo, dinero y tranquilidad son justamente los que esperan a que el problema llegue para buscar asesoría jurídica.\n\nEn Cubides & Asociados atendemos empresas en Cali de todos los tamaños. Y hay algo que se repite constantemente: el costo de resolver un problema legal siempre es mayor que el costo de haberlo prevenido.\n\nLos 5 riesgos legales más frecuentes en empresas de Cali\n\n1. Contratos sin respaldo jurídico. Muchas empresas en Cali operan con acuerdos verbales o contratos descargados de internet que no se ajustan a la ley colombiana. Un contrato mal redactado puede dejarte sin herramientas para reclamar un incumplimiento.\n\n2. Tipo societario inadecuado. ¿Tu empresa está constituida como SAS, S.A., empresa unipersonal o persona natural? Cada estructura tiene implicaciones distintas frente a responsabilidad, impuestos y capacidad de contratación.\n\n3. Riesgos laborales desatendidos. Las demandas laborales son uno de los litigios más costosos para las pymes. Contratos de trabajo deficientes o liquidaciones incorrectas pueden derivar en procesos que duran años.\n\n4. Incumplimiento de normativa sectorial. Dependiendo de tu industria, en Cali existen requisitos específicos de la Superintendencia de Sociedades, la DIAN o el INVIMA. No cumplirlos puede resultar en sanciones o cierres temporales.\n\n5. Falta de protección en contratos con proveedores y clientes. ¿Tus contratos tienen cláusulas de incumplimiento, confidencialidad y resolución de conflictos? Un buen contrato es la primera línea de defensa de cualquier empresa.\n\nUn abogado corporativo en Cali no es solo alguien que aparece cuando hay un problema. Su trabajo principal es anticiparse a los problemas antes de que ocurran: revisar y redactar contratos, asesorar en la constitución de su empresa, acompañarle en contratación estatal, y orientarle en cumplimiento normativo.\n\n¿Tienes una empresa en Cali y necesitas un abogado de confianza? En Cubides & Asociados la consulta inicial no tiene costo. Contáctenos al +57 314 289 4684 o escríbanos por WhatsApp."
   }
 ];
 
-function getPosts() {
-  const stored = localStorage.getItem(BLOG_KEY);
-  if (!stored) {
-    localStorage.setItem(BLOG_KEY, JSON.stringify(DEFAULT_POSTS));
-    return DEFAULT_POSTS;
-  }
-  return JSON.parse(stored);
+const _jbReady = () => JSONBIN_ID && !JSONBIN_ID.includes('PEGA') && JSONBIN_KEY && !JSONBIN_KEY.includes('PEGA');
+
+async function getPosts() {
+  if (!_jbReady()) return DEFAULT_POSTS;
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY, 'X-Bin-Meta': 'false' }
+    });
+    if (!res.ok) return DEFAULT_POSTS;
+    const data = await res.json();
+    return Array.isArray(data.record) ? data.record : DEFAULT_POSTS;
+  } catch(e) { return DEFAULT_POSTS; }
 }
 
-function savePosts(posts) {
-  localStorage.setItem(BLOG_KEY, JSON.stringify(posts));
+async function savePosts(posts) {
+  if (!_jbReady()) {
+    showAdminMsg('⚠ Configure JSONBIN_ID y JSONBIN_KEY en el HTML para guardar en la nube.');
+    return false;
+  }
+  const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+    body: JSON.stringify(posts)
+  });
+  if (!res.ok) { showAdminMsg('Error al guardar. Verifique las credenciales de JSONBin.'); return false; }
+  return true;
 }
 
 const CARD_ICONS = ['§','⚖','◈','◆','⚐','◎'];
@@ -828,10 +864,11 @@ const CARD_PHOTOS = [
   'CUBIDES_Y_ASOCIADOS__1.jpg'
 ];
 
-function renderBlog() {
-  const posts = getPosts();
+async function renderBlog() {
   const grid = document.getElementById('blogGrid');
   if(!grid) return;
+  grid.innerHTML = '<div style="grid-column:1/-1;padding:3rem 0;text-align:center;color:var(--text-muted);font-size:0.85rem;letter-spacing:0.1em;">Cargando artículos…</div>';
+  const posts = await getPosts();
   grid.innerHTML = '';
   if(posts.length === 0) {
     document.getElementById('blogEmpty').style.display='block';
@@ -881,13 +918,16 @@ document.getElementById('blogOverlay').addEventListener('click', function(e){ if
 
 // Admin panel
 let adminUnlocked = false;
-function openAdmin() {
+async function openAdmin() {
   if(!adminUnlocked) {
     const pwd = prompt('Contraseña de administrador:');
     if(pwd !== ADMIN_PASS) { alert('Contraseña incorrecta.'); return; }
     adminUnlocked = true;
   }
-  renderAdminList();
+  // Mostrar aviso de configuración si JSONBin no está listo
+  const setupBanner = document.getElementById('adminSetupBanner');
+  if(setupBanner) setupBanner.style.display = _jbReady() ? 'none' : 'block';
+  await renderAdminList();
   document.getElementById('adminOverlay').style.display='block';
   document.body.style.overflow='hidden';
 }
@@ -896,8 +936,8 @@ function closeAdmin() {
   document.body.style.overflow='';
 }
 
-function renderAdminList() {
-  const posts = getPosts();
+async function renderAdminList() {
+  const posts = await getPosts();
   const list = document.getElementById('adminList');
   if(posts.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No hay artículos aún.</p>'; return; }
   list.innerHTML = '<div style="font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem;">Artículos publicados</div>' +
@@ -914,7 +954,7 @@ function renderAdminList() {
     </div>`).join('');
 }
 
-function savePost() {
+async function savePost() {
   const tag = document.getElementById('aTag').value;
   const date = document.getElementById('aDate').value.trim();
   const title = document.getElementById('aTitle').value.trim();
@@ -922,7 +962,9 @@ function savePost() {
   const body = document.getElementById('aBody').value.trim();
   const editId = document.getElementById('editId').value;
   if(!title || !body || !date) { showAdminMsg('Complete todos los campos requeridos.'); return; }
-  const posts = getPosts();
+  const btn = document.querySelector('[onclick="savePost()"]');
+  if(btn){ btn.textContent = 'Guardando…'; btn.disabled = true; }
+  const posts = await getPosts();
   if(editId) {
     const idx = posts.findIndex(p => p.id === parseInt(editId));
     if(idx >= 0) { posts[idx] = {...posts[idx], tag, date, title, excerpt, body}; }
@@ -930,15 +972,17 @@ function savePost() {
     const newId = posts.length > 0 ? Math.max(...posts.map(p=>p.id)) + 1 : 1;
     posts.push({id:newId, tag, date, title, excerpt, body});
   }
-  savePosts(posts);
-  renderBlog();
-  renderAdminList();
+  const ok = await savePosts(posts);
+  if(btn){ btn.textContent = 'Publicar artículo'; btn.disabled = false; }
+  if(ok === false) return;
+  await renderBlog();
+  await renderAdminList();
   clearForm();
   showAdminMsg(editId ? '✓ Artículo actualizado.' : '✓ Artículo publicado correctamente.');
 }
 
-function editPost(id) {
-  const posts = getPosts();
+async function editPost(id) {
+  const posts = await getPosts();
   const p = posts.find(x => x.id === id);
   if(!p) return;
   document.getElementById('editId').value = id;
@@ -951,12 +995,12 @@ function editPost(id) {
   document.getElementById('aTitle').scrollIntoView({behavior:'smooth'});
 }
 
-function deletePost(id) {
+async function deletePost(id) {
   if(!confirm('¿Eliminar este artículo permanentemente?')) return;
-  const posts = getPosts().filter(p => p.id !== id);
-  savePosts(posts);
-  renderBlog();
-  renderAdminList();
+  const posts = (await getPosts()).filter(p => p.id !== id);
+  await savePosts(posts);
+  await renderBlog();
+  await renderAdminList();
 }
 
 function clearForm() {
